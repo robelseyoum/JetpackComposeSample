@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.jetpackcomposesample.presentation.BaseApplication
 import com.example.jetpackcomposedemo.presentation.components.RecipeCard
+import com.example.jetpackcomposesample.presentation.components.FoodCategoryChip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.internal.wait
@@ -55,11 +56,12 @@ class RecipeListFragment : Fragment() {
 
                 val query = viewModel.query.value
 
+                val selectedCategory = viewModel.selectedCategory.value
 
                 Column {
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colors.primary,
+                        color = Color.White,
                         elevation = 8.dp,
                     ) {
                         Column {
@@ -68,7 +70,7 @@ class RecipeListFragment : Fragment() {
                                     modifier = Modifier
                                         .fillMaxWidth(.9f)
                                         .padding(8.dp)
-                                        .background(MaterialTheme.colors.surface),
+                                        .background(Color.White),
                                     value = query,
                                     onValueChange = { viewModel.onQueryChanged(it) },
                                     label = { Text("Search") },
@@ -82,7 +84,7 @@ class RecipeListFragment : Fragment() {
                                     textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
                                     colors = TextFieldDefaults.textFieldColors(),
                                     keyboardActions = KeyboardActions(onDone = {
-                                        viewModel.newSearch(query)
+                                        viewModel.newSearch()
                                         clearFocus()
                                     })
                                 )
@@ -93,11 +95,12 @@ class RecipeListFragment : Fragment() {
                                     .horizontalScroll(rememberScrollState())
                             ) {
                                 for (category in getAllFoodCategories()) {
-                                    Text(
-                                        text = category.value,
-                                        style = MaterialTheme.typography.body2,
-                                        color = MaterialTheme.colors.secondary,
-                                        modifier = Modifier.padding(8.dp)
+                                    FoodCategoryChip(
+                                        category = category.value,
+                                        onSelectedCategoryChanged = {
+                                            viewModel.onSelectedCategoryChanged(it)
+                                        },
+                                        onExecuteSearch = viewModel::newSearch
                                     )
                                 }
                             }
