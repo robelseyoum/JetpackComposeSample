@@ -5,15 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -25,6 +30,7 @@ import com.example.jetpackcomposesample.presentation.BaseApplication
 import com.example.jetpackcomposedemo.presentation.components.RecipeCard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 
@@ -55,36 +61,52 @@ class RecipeListFragment : Fragment() {
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colors.primary,
                         elevation = 8.dp,
-                    ){
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            TextField(
+                    ) {
+                        Column {
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                TextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth(.9f)
+                                        .padding(8.dp)
+                                        .background(MaterialTheme.colors.surface),
+                                    value = query,
+                                    onValueChange = { viewModel.onQueryChanged(it) },
+                                    label = { Text("Search") },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Done
+                                    ),
+                                    leadingIcon = {
+                                        Icon(Icons.Filled.Search, contentDescription = "Search")
+                                    },
+                                    textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
+                                    colors = TextFieldDefaults.textFieldColors(),
+                                    keyboardActions = KeyboardActions(onDone = {
+                                        viewModel.newSearch(query)
+                                        clearFocus()
+                                    })
+                                )
+                            }
+                            Row(
                                 modifier = Modifier
-                                    .fillMaxWidth(.9f)
-                                    .padding(8.dp)
-                                    .background(MaterialTheme.colors.surface),
-                                value = query,
-                                onValueChange = { viewModel.onQueryChanged(it) },
-                                label = { Text("Search") },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Done),
-                                leadingIcon = {
-                                    Icon(Icons.Filled.Search, contentDescription = "Search")
-                                },
-                                textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
-                                colors = TextFieldDefaults.textFieldColors(),
-                                keyboardActions  =   KeyboardActions(onDone = {
-                                    viewModel.newSearch(query)
-                                    clearFocus()
-                                })
-                            )
+                                    .fillMaxWidth()
+                                    .horizontalScroll(rememberScrollState())
+                            ) {
+                                for (category in getAllFoodCategories()) {
+                                    Text(
+                                        text = category.value,
+                                        style = MaterialTheme.typography.body2,
+                                        color = MaterialTheme.colors.secondary,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            }
                         }
                     }
-
                     LazyColumn {
                         itemsIndexed(
                             items = recipes
-                        ){ index, recipe ->
+                        ) { index, recipe ->
                             RecipeCard(recipe = recipe, onClick = {})
                         }
                     }
