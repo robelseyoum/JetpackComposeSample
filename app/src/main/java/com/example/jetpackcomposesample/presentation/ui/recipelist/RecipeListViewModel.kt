@@ -51,5 +51,6 @@ constructor(
         selectedCategory.value = newCategory
         onQueryChanged(category)
     }
+
 }
 

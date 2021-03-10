@@ -48,7 +48,6 @@ fun loadPicture(url: String, @DrawableRes defaultImage: Int): MutableState<Bitma
                 bitmapState.value = resource
             }
         })
-
     return bitmapState
 }
 
