@@ -73,9 +73,10 @@ class RecipeListFragment : Fragment() {
                                 },
                                 textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
                                 colors = TextFieldDefaults.textFieldColors(),
-                                keyboardActions  = KeyboardActions {
+                                keyboardActions  =   KeyboardActions(onDone = {
                                     viewModel.newSearch(query)
-                                }
+                                    clearFocus()
+                                })
                             )
                         }
                     }
@@ -83,7 +84,7 @@ class RecipeListFragment : Fragment() {
                     LazyColumn {
                         itemsIndexed(
                             items = recipes
-                        ){index, recipe ->
+                        ){ index, recipe ->
                             RecipeCard(recipe = recipe, onClick = {})
                         }
                     }
