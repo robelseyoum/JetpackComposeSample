@@ -7,6 +7,7 @@ import com.example.jetpackcomposesample.domain.model.Recipe
 import com.example.jetpackcomposesample.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -25,31 +26,48 @@ constructor(
 
     val query = mutableStateOf("")
 
+    val loading = mutableStateOf(false)
+
     val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
 
     init {
         newSearch()
     }
 
-    fun newSearch(){
+    fun newSearch() {
         viewModelScope.launch {
+            loading.value = true
+            resetSearchState()
+            delay(2000)
             val result = repository.search(
                 token = token,
                 page = 1,
                 query = query.value
             )
             recipes.value = result
+            loading.value = false
         }
     }
 
-    fun onQueryChanged(query: String){
+    fun onQueryChanged(query: String) {
         this.query.value = query
     }
 
-    fun onSelectedCategoryChanged(category: String){
+    fun onSelectedCategoryChanged(category: String) {
         val newCategory = getFoodCategory(category)
         selectedCategory.value = newCategory
         onQueryChanged(category)
+    }
+
+    private fun resetSearchState() {
+        recipes.value = listOf()
+        if (selectedCategory.value?.value != query.value) {
+            clearSelectedCategory()
+        }
+    }
+
+    private fun clearSelectedCategory() {
+        selectedCategory.value = null
     }
 
 }
