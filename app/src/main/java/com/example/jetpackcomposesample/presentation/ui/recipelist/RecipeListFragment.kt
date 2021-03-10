@@ -97,6 +97,7 @@ class RecipeListFragment : Fragment() {
                                 for (category in getAllFoodCategories()) {
                                     FoodCategoryChip(
                                         category = category.value,
+                                        isSelected = selectedCategory == category,
                                         onSelectedCategoryChanged = {
                                             viewModel.onSelectedCategoryChanged(it)
                                         },
