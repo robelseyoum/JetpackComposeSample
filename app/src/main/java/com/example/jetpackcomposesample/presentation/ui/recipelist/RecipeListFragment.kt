@@ -93,6 +93,7 @@ class RecipeListFragment : Fragment() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .horizontalScroll(rememberScrollState())
+                                    .padding(start=8.dp, bottom=8.dp)
                             ) {
                                 for (category in getAllFoodCategories()) {
                                     FoodCategoryChip(
