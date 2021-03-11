@@ -120,6 +120,11 @@ dependencies {
 
     //compose preview
     implementation "androidx.compose.ui:ui-tooling:$Versions.compose"
+
+    //compose animation
+    implementation "androidx.compose.animation:animation:$Versions.compose"
+
+
 }
 
 

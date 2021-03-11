@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class BaseApplication : Application(){
 
-    // should be saved in data store
+    // should be saved in Sharedpreference or data store
     val isDark = mutableStateOf(false)
 
     fun toggleLightTheme(){
