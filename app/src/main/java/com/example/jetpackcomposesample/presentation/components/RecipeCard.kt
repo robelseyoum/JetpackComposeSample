@@ -1,4 +1,4 @@
-package com.example.jetpackcomposedemo.presentation.components
+package com.example.jetpackcomposesample.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
