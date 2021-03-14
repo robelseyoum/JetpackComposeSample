@@ -1,5 +1,6 @@
 import dependencies.AnnotationProcessing
 import dependencies.InstrumentationTest
+import dependencies.JetPackCompose
 import dependencies.Jetbrains
 import dependencies.Square
 import dependencies.UnitTest
@@ -116,15 +117,13 @@ dependencies {
     implementation InstrumentationTest.compose_ui
 
     //compose icons
-    implementation "androidx.compose.material:material-icons-extended:$Versions.compose"
+    implementation JetPackCompose.compose_icon
 
     //compose preview
-    implementation "androidx.compose.ui:ui-tooling:$Versions.compose"
+    implementation JetPackCompose.compose_interaction
 
     //compose animation
-    implementation "androidx.compose.animation:animation:$Versions.compose"
-
-
+    implementation JetPackCompose.compose_animation
 }
 
 

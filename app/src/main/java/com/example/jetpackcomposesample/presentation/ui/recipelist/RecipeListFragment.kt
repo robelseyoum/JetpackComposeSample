@@ -10,21 +10,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.jetpackcomposesample.R
 import com.example.jetpackcomposesample.presentation.components.RecipeCard
 import com.example.jetpackcomposesample.presentation.BaseApplication
+import com.example.jetpackcomposesample.presentation.components.RecipeList
 import com.example.jetpackcomposesample.presentation.components.SearchAppBar
-import com.example.jetpackcomposesample.presentation.components.circularIndeterminateProgressBar
+import androidx.navigation.findNavController
 import com.example.jetpackcomposesample.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
-
+@ExperimentalMaterialApi
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
@@ -48,6 +51,7 @@ class RecipeListFragment : Fragment() {
                     val query = viewModel.query.value
                     val loading = viewModel.loading.value
                     val selectedCategory = viewModel.selectedCategory.value
+                    val page = viewModel.page.value
 
                     Column {
                         SearchAppBar(
@@ -69,7 +73,19 @@ class RecipeListFragment : Fragment() {
                                     RecipeCard(recipe = recipe, onClick = {})
                                 }
                             }
-                            circularIndeterminateProgressBar(isDisplayed = loading, 0.3f)
+                            //circularIndeterminateProgressBar(isDisplayed = loading, 0.3f)
+                            RecipeList(
+                                loading = loading,
+                                recipes = recipes,
+                                onChangeScrollPosition = {},
+                                page = page,
+                                onTriggerNextPage = {  },
+                                onNavigateToRecipeDetailScreen = {
+                                    val bundle = Bundle()
+                                    bundle.putInt("recipeId", it)
+                                    findNavController().navigate(R.id.viewRecipe, bundle)
+                                }
+                            )
                         }
                     }
                 }

@@ -12,6 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
+
+const val PAGE_SIZE = 30
+
+const val STATE_KEY_PAGE = "recipe.state.page.key"
+const val STATE_KEY_QUERY = "recipe.state.query.key"
+const val STATE_KEY_LIST_POSITION = "recipe.state.query.list_position"
+const val STATE_KEY_SELECTED_CATEGORY = "recipe.state.query.selected_category"
+
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class RecipeListViewModel
@@ -29,6 +37,8 @@ constructor(
     val loading = mutableStateOf(false)
 
     val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
+    // Pagination starts at '1' (-1 = exhausted)
+    val page = mutableStateOf(1)
 
     init {
         newSearch()
