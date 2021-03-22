@@ -10,12 +10,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
 import com.example.jetpackcomposesample.R
 import com.example.jetpackcomposesample.presentation.components.RecipeCard
 import com.example.jetpackcomposesample.presentation.BaseApplication
@@ -53,17 +59,23 @@ class RecipeListFragment : Fragment() {
                     val selectedCategory = viewModel.selectedCategory.value
                     val page = viewModel.page.value
 
-                    Column {
-                        SearchAppBar(
-                            query = query,
-                            onQueryChanged = viewModel::onQueryChanged,
-                            onExecuteSearch = viewModel::newSearch,
-                            selectedCategory = selectedCategory,
-                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                            onToggleTheme = { application.toggleLightTheme() }
-                        )
+                    Scaffold(
+                        topBar = {
+                            SearchAppBar(
+                                query = query,
+                                onQueryChanged = viewModel::onQueryChanged,
+                                onExecuteSearch = viewModel::newSearch,
+                                selectedCategory = selectedCategory,
+                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                                onToggleTheme = { application.toggleLightTheme() }
+                            )
+                        },
+                        bottomBar = {MyBottomNavigation()},
+                        drawerContent = {MyDrawer()}
+                    ) {
                         Box(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .background(MaterialTheme.colors.surface)
                         ) {
                             LazyColumn {
@@ -79,7 +91,7 @@ class RecipeListFragment : Fragment() {
                                 recipes = recipes,
                                 onChangeScrollPosition = {},
                                 page = page,
-                                onTriggerNextPage = {  },
+                                onTriggerNextPage = { },
                                 onNavigateToRecipeDetailScreen = {
                                     val bundle = Bundle()
                                     bundle.putInt("recipeId", it)
@@ -97,13 +109,43 @@ class RecipeListFragment : Fragment() {
 
 
 
+@Composable
+fun MyBottomNavigation(
+   // navigationController: NavController
+){
+    BottomNavigation(
+        elevation = 12.dp
+    ) {
+        BottomNavigationItem(
+            icon = {Icon(Icons.Default.BrokenImage, contentDescription = "Search")},
+            selected = false,
+            onClick = {
+//                navigationController.navigate()
+            }
+        )
+        BottomNavigationItem(
+            icon = {Icon(Icons.Default.Security, contentDescription = "Search")},
+            selected = false,
+            onClick = {}
+        )
+        BottomNavigationItem(
+            icon = {Icon(Icons.Default.Search, contentDescription = "Search")},
+            selected = false,
+            onClick = {}
+        )
+
+    }
+}
 
 
-
-
-
-
-
-
-
+@Composable
+fun MyDrawer(){
+    Column() {
+        Text("Item1")
+        Text("Item2")
+        Text("Item3")
+        Text("Item4")
+        Text("Item5")
+    }
+}
 
