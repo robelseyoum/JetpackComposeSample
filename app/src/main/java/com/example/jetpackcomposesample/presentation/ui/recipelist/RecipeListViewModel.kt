@@ -48,7 +48,7 @@ constructor(
         viewModelScope.launch {
             loading.value = true
             resetSearchState()
-            delay(200)
+            delay(100)
             val result = repository.search(
                 token = token,
                 page = 1,
