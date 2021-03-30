@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.example.jetpackcomposesample.R
 import com.example.jetpackcomposesample.domain.model.Recipe
 import com.example.jetpackcomposesample.presentation.ui.recipelist.PAGE_SIZE
+import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
@@ -26,7 +27,7 @@ fun RecipeList(
     recipes: List<Recipe>,
     onChangeScrollPosition: (Int) -> Unit,
     page: Int,
-    onTriggerNextPage: () -> Unit,
+    onTriggerNextPage: (RecipeListEvent) -> Unit,
     navController: NavController,
     scaffoldState: ScaffoldState,
     snackbarController: SnackbarController,
@@ -47,7 +48,7 @@ fun RecipeList(
                 ) { index, recipe ->
                     onChangeScrollPosition(index)
                     if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
-                        onTriggerNextPage()
+                        onTriggerNextPage(RecipeListEvent.NextPageEvent)
                     }
                     RecipeCard(
                         recipe = recipe,

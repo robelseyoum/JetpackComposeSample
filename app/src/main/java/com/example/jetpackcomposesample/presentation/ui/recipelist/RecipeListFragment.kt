@@ -88,7 +88,7 @@ class RecipeListFragment : Fragment() {
                             RecipeList(
                                 loading = loading,
                                 recipes = recipes,
-                                onChangeScrollPosition = {},
+                                onChangeScrollPosition = viewModel::onChangeRecipeScrollPosition,
                                 page = page,
                                 onTriggerNextPage = { viewModel.onTriggerEvent(RecipeListEvent.NextPageEvent) },
                                 navController = findNavController(),
