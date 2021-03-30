@@ -37,8 +37,6 @@ constructor(
     val loading = mutableStateOf(false)
 
     val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
-    // Pagination starts at '1' (-1 = exhausted)
-    val page = mutableStateOf(1)
 
     init {
         newSearch()
@@ -48,7 +46,7 @@ constructor(
         viewModelScope.launch {
             loading.value = true
             resetSearchState()
-            delay(100)
+            delay(200)
             val result = repository.search(
                 token = token,
                 page = 1,
