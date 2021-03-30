@@ -72,7 +72,7 @@ class RecipeListFragment : Fragment() {
                             SearchAppBar(
                                 query = query,
                                 onQueryChanged = viewModel::onQueryChanged,
-                                onExecuteSearch = viewModel::newSearch,
+                                onExecuteSearch = { viewModel.onTriggerEvent(RecipeListEvent.NewSearchEvent) },
                                 selectedCategory = selectedCategory,
                                 onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged
                             ) { application.toggleLightTheme() }
@@ -90,8 +90,8 @@ class RecipeListFragment : Fragment() {
                                 recipes = recipes,
                                 onChangeScrollPosition = {},
                                 page = page,
-                                onTriggerNextPage = viewModel::nextPage,
-                                navController = findNavController() ,
+                                onTriggerNextPage = { viewModel.onTriggerEvent(RecipeListEvent.NextPageEvent) },
+                                navController = findNavController(),
                                 scaffoldState = scaffoldState,
                                 snackbarController = snackbarController
                             )
