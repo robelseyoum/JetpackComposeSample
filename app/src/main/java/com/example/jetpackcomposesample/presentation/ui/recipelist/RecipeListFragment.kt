@@ -64,7 +64,7 @@ class RecipeListFragment : Fragment() {
                     val query = viewModel.query.value
                     val loading = viewModel.loading.value
                     val selectedCategory = viewModel.selectedCategory.value
-//                    val page = viewModel.page.value
+                    val page = viewModel.page.value
                     val scaffoldState = rememberScaffoldState()
 
                     Scaffold(
@@ -72,21 +72,7 @@ class RecipeListFragment : Fragment() {
                             SearchAppBar(
                                 query = query,
                                 onQueryChanged = viewModel::onQueryChanged,
-//                                onExecuteSearch = {
-//                                    if (viewModel.selectedCategory.value?.value == "Milk") {
-//                                        snackbarController.getScope().launch {
-//                                            snackbarController
-//                                                .showSnackbar(
-//                                                    scaffoldState = scaffoldState,
-//                                                    message = "Invalid category: MILK!",
-//                                                    actionLabel = "Hide",
-//                                                )
-//                                        }
-//                                    } else {
-//                                        viewModel::newSearch
-//                                    }
-//                                },
-                                onExecuteSearch = {viewModel::newSearch},
+                                onExecuteSearch = viewModel::newSearch,
                                 selectedCategory = selectedCategory,
                                 onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged
                             ) { application.toggleLightTheme() }
@@ -99,13 +85,16 @@ class RecipeListFragment : Fragment() {
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colors.surface)
                         ) {
-                                LazyColumn {
-                                    itemsIndexed(
-                                        items = recipes
-                                    ) { index, recipe ->
-                                        RecipeCard(recipe = recipe, onClick = {})
-                                    }
-                                }
+                            RecipeList(
+                                loading = loading,
+                                recipes = recipes,
+                                onChangeScrollPosition = {},
+                                page = page,
+                                onTriggerNextPage = viewModel::nextPage,
+                                navController = findNavController() ,
+                                scaffoldState = scaffoldState,
+                                snackbarController = snackbarController
+                            )
                         }
                     }
                 }

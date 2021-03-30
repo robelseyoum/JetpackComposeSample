@@ -1,5 +1,6 @@
 package com.example.jetpackcomposesample.presentation.ui.recipelist
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
@@ -38,6 +39,10 @@ constructor(
 
     val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
 
+    val page = mutableStateOf(1)
+
+    var recipeListScrollPosition = 0
+
     init {
         newSearch()
     }
@@ -69,6 +74,8 @@ constructor(
 
     private fun resetSearchState() {
         recipes.value = listOf()
+        page.value = 1
+        onChangeRecipeScrollPosition(0)
         if (selectedCategory.value?.value != query.value) {
             clearSelectedCategory()
         }
@@ -77,6 +84,46 @@ constructor(
     private fun clearSelectedCategory() {
         selectedCategory.value = null
     }
+
+    fun nextPage() {
+        viewModelScope.launch {
+            if ((recipeListScrollPosition + 1) >= (page.value * PAGE_SIZE)) {
+                loading.value = true
+                incrementPage()
+                Log.d("nextPage", "nextPage: triggered: ${page.value}")
+                delay(1000)
+                if(page.value > 1){
+                    val result = repository.search(
+                        token = token,
+                        page = 1,
+                        query = query.value
+                    )
+                    Log.d("nextPage", "nextPage: Result: $result")
+                    appendRecipes(result)
+                }
+                loading.value = false
+            }
+        }
+    }
+
+    /**
+     * Append new recipes to the current list of recipes
+     */
+    private fun appendRecipes(recipes: List<Recipe>) {
+        val current = ArrayList(this.recipes.value)
+        current.addAll(recipes)
+        this.recipes.value = current
+    }
+
+
+    private fun incrementPage() {
+        page.value = page.value + 1
+    }
+
+    fun onChangeRecipeScrollPosition(position: Int) {
+        recipeListScrollPosition = position
+    }
+
 
 }
 
