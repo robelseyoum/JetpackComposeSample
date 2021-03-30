@@ -9,7 +9,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 
 
 @Composable
-fun circularIndeterminateProgressBar(isDisplayed: Boolean, verticalBias: Float) {
+fun CircularIndeterminateProgressBar(isDisplayed: Boolean, verticalBias: Float) {
     if (isDisplayed) {
         ConstraintLayout(modifier = Modifier.fillMaxSize())
         {
