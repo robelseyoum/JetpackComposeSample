@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcomposesample.R
 import com.example.jetpackcomposesample.domain.model.Recipe
+import com.example.jetpackcomposesample.presentation.navigation.Screen
 import com.example.jetpackcomposesample.presentation.ui.recipelist.PAGE_SIZE
 import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,57 +28,35 @@ fun RecipeList(
     recipes: List<Recipe>,
     onChangeScrollPosition: (Int) -> Unit,
     page: Int,
-    onTriggerNextPage: (RecipeListEvent) -> Unit,
-    navController: NavController,
-    scaffoldState: ScaffoldState,
-    snackbarController: SnackbarController,
-){
-    Box(modifier = Modifier
-        .background(color = MaterialTheme.colors.surface)
+    onTriggerNextPage: () -> Unit,
+    onNavigateToRecipeDetailScreen: (String) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .background(color = MaterialTheme.colors.surface)
     ) {
         if (loading && recipes.isEmpty()) {
             LoadingRecipeListShimmer(imageHeight = 250.dp)
-        }
-        else if(recipes.isEmpty()){
+        } else if (recipes.isEmpty()) {
             NothingHere()
-        }
-        else {
-            LazyColumn{
+        } else {
+            LazyColumn {
                 itemsIndexed(
                     items = recipes
                 ) { index, recipe ->
                     onChangeScrollPosition(index)
                     if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
-                        onTriggerNextPage(RecipeListEvent.NextPageEvent)
+                        onTriggerNextPage()
                     }
                     RecipeCard(
                         recipe = recipe,
                         onClick = {
-                            if(recipe.id != null){
-                                val bundle = Bundle()
-                                bundle.putInt("recipeId", recipe.id)
-                                navController.navigate(R.id.viewRecipe, bundle)
-                            }
-                            else{
-                                snackbarController.getScope().launch {
-                                    snackbarController.showSnackbar(
-                                        scaffoldState = scaffoldState,
-                                        message = "Recipe Error",
-                                        actionLabel = "OK",
-                                    )
-                                }
-                            }
+                                val route = Screen.RecipeDetail.route + "/${recipe.id}"
+                                onNavigateToRecipeDetailScreen(route)
                         }
                     )
                 }
             }
-            DefaultSnackbar(
-                snackbarHostState = scaffoldState.snackbarHostState,
-                onDismiss = {
-                    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
         }
     }
 }

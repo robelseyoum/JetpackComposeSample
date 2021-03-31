@@ -66,6 +66,7 @@ fun AppTheme(
                 onDismiss = { scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() },
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
+            /**
             val isShowing = remember { mutableStateOf(true) }
             if (isShowing.value) {
                 AlertDialog(
@@ -98,6 +99,7 @@ fun AppTheme(
                     }
                 )
             }
+            */
         }
     }
 }

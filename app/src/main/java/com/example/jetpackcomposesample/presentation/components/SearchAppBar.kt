@@ -72,7 +72,7 @@ fun SearchAppBar(
                 ) {
                     val menu = createRef()
                     IconButton(
-                        onClick = {onToggleTheme()},
+                        onClick = { onToggleTheme() },
                         modifier = Modifier
                             .constrainAs(menu) {
                                 end.linkTo(parent.end)

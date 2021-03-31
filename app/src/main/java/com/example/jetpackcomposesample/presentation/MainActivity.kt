@@ -3,123 +3,65 @@ package com.example.jetpackcomposesample.presentation
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.jetpackcomposesample.R
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.HiltViewModelFactory
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.*
+import androidx.navigation.compose.rememberNavController
+import com.example.jetpackcomposesample.presentation.navigation.Screen
+import com.example.jetpackcomposesample.presentation.ui.recipe.RecipeDetailScreen
+import com.example.jetpackcomposesample.presentation.ui.recipe.RecipeViewModel
+import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListScreen
+import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListViewModel
+import com.example.jetpackcomposesample.util.SettingsDataStore
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
 
+@ExperimentalMaterialApi
+@ExperimentalCoroutinesApi
+@ExperimentalComposeUiApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var settingsDataStore: SettingsDataStore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
-
-    fun rowDemo() {
         setContent {
-            Column {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .border(
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = Color.Black
-                            )
-                        ),
-                    verticalArrangement = Arrangement.SpaceAround
+            //build navigation graph
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = Screen.RecipeList.route){
 
-                ) {
-                    Text(
-                        text = "ITEM1-COLUMN",
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                    Text(
-                        text = "ITEM1-COLUMN",
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                //navBackStackEntry = allow instantiate viewmodel in composable
+                composable(route = Screen.RecipeList.route){ navBackStackEntry ->
+                    val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
+                    val viewModel : RecipeListViewModel = viewModel("RecipeListViewModel", factory = factory)
+                    RecipeListScreen(
+                        isDarkTheme = (application as BaseApplication).isDark.value,
+                        onToggleTheme = (application as BaseApplication)::toggleLightTheme,
+                        onNavigateToRecipeDetailScreen = navController::navigate,
+                        viewModel = viewModel
                     )
                 }
-                Spacer(modifier = Modifier.padding(20.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .border(
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = Color.Black
-                            )
-                        ),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "ITEM1-ROW",
-                        modifier = Modifier.align(Alignment.CenterVertically)
+
+                composable(
+                    route = Screen.RecipeDetail.route + "/{recipeId}",
+                    arguments = listOf(navArgument("recipeId"){
+                        type = NavType.IntType
+                    })
+                ) { navBackStackEntry ->
+                    val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
+                    val viewModel: RecipeViewModel = viewModel("RecipeViewModel", factory = factory)
+                    RecipeDetailScreen(
+                        isDarkTheme = (application as BaseApplication).isDark.value,
+                        recipeId = navBackStackEntry.arguments?.getInt("recipeId"),
+                        viewModel = viewModel
                     )
-                }
-            }
-        }
-    }
-    fun columnDemo() {
-        setContent {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xFFF2F2F2))
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.happy_meal),
-                    contentDescription = null,
-                    modifier = Modifier.height(300.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Happy Meal",
-                            style = TextStyle(fontSize = 26.sp)
-                        )
-                        Text(
-                            text = "$5.99",
-                            style = TextStyle(
-                                color = Color.Green,
-                                fontSize = 17.sp
-                            ),
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        )
-                    }
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
-                    Text(
-                        text = "800 Calories",
-                        style = TextStyle(
-                            fontSize = 17.sp
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(top = 10.dp))
-                    Button(
-                        onClick = {},
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ){
-                        Text(text = "ORDER NOW")
-                    }
                 }
             }
         }

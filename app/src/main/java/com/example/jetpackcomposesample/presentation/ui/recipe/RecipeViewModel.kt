@@ -30,6 +30,7 @@ constructor(
 
     val recipe: MutableState<Recipe?> = mutableStateOf(null)
     val loading = mutableStateOf(false)
+    val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     init {
         state.get<Int>(STATE_KEY_RECIPE)?.let { recipeId ->
