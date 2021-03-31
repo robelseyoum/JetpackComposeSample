@@ -1,5 +1,6 @@
 package com.example.jetpackcomposesample.di
 
+import com.example.jetpackcomposesample.interactors.recipe.GetRecipeUsecase
 import com.example.jetpackcomposesample.interactors.recipelist.SearchRecipesUsecase
 import com.example.jetpackcomposesample.network.RecipeService
 import com.example.jetpackcomposesample.network.model.RecipeDtoMapper
@@ -23,6 +24,18 @@ object InteractorsModule {
         return SearchRecipesUsecase(
             recipeService = recipeService,
             dtoMapper = recipeDtoMapper,
+        )
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideGetRecipe(
+        recipeService: RecipeService,
+        recipeDtoMapper: RecipeDtoMapper,
+    ): GetRecipeUsecase {
+        return GetRecipeUsecase(
+            recipeService = recipeService,
+            recipeDtoMapper = recipeDtoMapper,
         )
     }
 }

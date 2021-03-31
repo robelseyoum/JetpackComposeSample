@@ -7,11 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcomposesample.domain.model.Recipe
+import com.example.jetpackcomposesample.interactors.recipe.GetRecipeUsecase
 import com.example.jetpackcomposesample.presentation.ui.recipe.RecipeEvent.*
-import com.example.jetpackcomposesample.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -22,7 +23,7 @@ const val STATE_KEY_RECIPE = "state.key.recipeId"
 class RecipeViewModel
 @Inject
 constructor(
-    private val recipeRepository: RecipeRepository,
+    private val getRecipeUsecase: GetRecipeUsecase,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
 ) : ViewModel() {
@@ -52,12 +53,18 @@ constructor(
         }
     }
 
-    private suspend fun getRecipe(id: Int) {
-        loading.value = true
-        delay(1000)
-        val recipe = recipeRepository.get(token = token, id = id)
-        this.recipe.value = recipe
-        state.set(STATE_KEY_RECIPE, recipe.id)
-        loading.value = false
+    private fun getRecipe(id: Int) {
+        getRecipeUsecase.execute(id, token).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let { data ->
+                recipe.value = data
+                state.set(STATE_KEY_RECIPE, data.id)
+            }
+
+            dataState.error?.let { error ->
+                Log.e("getRecipe", "getRecipe: $error")
+            }
+        }.launchIn(viewModelScope)
     }
 }

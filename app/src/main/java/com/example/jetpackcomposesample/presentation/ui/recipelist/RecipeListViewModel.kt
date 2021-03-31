@@ -7,7 +7,6 @@ import androidx.lifecycle.*
 import com.example.jetpackcomposesample.domain.model.Recipe
 import com.example.jetpackcomposesample.interactors.recipelist.SearchRecipesUsecase
 import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListEvent.*
-import com.example.jetpackcomposesample.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -27,7 +26,6 @@ class RecipeListViewModel
 @Inject
 constructor(
     private val searchRecipesUsecase: SearchRecipesUsecase,
-    private val repository: RecipeRepository,
     @Named("auth_token") private val token: String,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
