@@ -5,11 +5,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.example.jetpackcomposesample.domain.model.Recipe
+import com.example.jetpackcomposesample.interactors.recipelist.SearchRecipesUsecase
 import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListEvent.*
 import com.example.jetpackcomposesample.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -23,6 +26,7 @@ const val PAGE_SIZE = 30
 class RecipeListViewModel
 @Inject
 constructor(
+    private val searchRecipesUsecase: SearchRecipesUsecase,
     private val repository: RecipeRepository,
     @Named("auth_token") private val token: String,
     private val savedStateHandle: SavedStateHandle,
@@ -61,17 +65,25 @@ constructor(
         }
     }
 
-    private suspend fun newSearch() {
-        loading.value = true
+    private fun newSearch() {
+        Log.d("newSearch", "newSearch: query: ${query.value}, page: ${page.value}")
+        // New search. Reset the state
         resetSearchState()
-        delay(200)
-        val result = repository.search(
-            token = token,
-            page = 1,
-            query = query.value
-        )
-        recipes.value = result
-        loading.value = false
+
+        searchRecipesUsecase
+            .execute(token = token, page = page.value, query = query.value)
+            .onEach { dataState ->
+                loading.value = dataState.loading
+
+                dataState.data?.let { list ->
+                    recipes.value = list
+                }
+
+                dataState.error?.let { error ->
+                    Log.e("newSearch", "newSearch: $error")
+                }
+
+            }.launchIn(viewModelScope)
     }
 
     fun onQueryChanged(query: String) {
@@ -99,20 +111,25 @@ constructor(
 
     private suspend fun nextPage() {
         if ((recipeListScrollPosition + 1) >= (page.value * PAGE_SIZE)) {
-            loading.value = true
             incrementPage()
             Log.d("nextPage", "nextPage: triggered: ${page.value}")
-            delay(1000)
+            delay(1000)//should be removed
             if (page.value > 1) {
-                val result = repository.search(
-                    token = token,
-                    page = 1,
-                    query = query.value
-                )
-                Log.d("nextPage", "nextPage: Result: $result")
-                appendRecipes(result)
+                searchRecipesUsecase
+                    .execute(token = token, page = page.value, query = query.value)
+                    .onEach { dataState ->
+                        loading.value = dataState.loading
+
+                        dataState.data?.let { list ->
+                            appendRecipes(list)
+                        }
+
+                        dataState.error?.let { error ->
+                            Log.e("nextPage", "nextPage error: $error")
+                        }
+
+                    }.launchIn(viewModelScope)
             }
-            loading.value = false
         }
     }
 
