@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object DateUtils {
-
+    //date format
     private val sdf = SimpleDateFormat("MMMMM d, yyyy")
 
     fun longToDate(long: Long): Date {
@@ -16,7 +16,7 @@ object DateUtils {
         return date.time / 1000 // return seconds
     }
 
-    // Ex: November 4, 2021
+
     fun dateToString(date: Date): String{
         return sdf.format(date)
     }
