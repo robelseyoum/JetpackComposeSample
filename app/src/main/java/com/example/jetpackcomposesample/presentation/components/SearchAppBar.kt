@@ -70,17 +70,16 @@ fun SearchAppBar(
                 ConstraintLayout(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
-                    val menu = createRef()
+                    val (menu) = createRefs()
                     IconButton(
-                        onClick = { onToggleTheme() },
                         modifier = Modifier
                             .constrainAs(menu) {
                                 end.linkTo(parent.end)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(parent.bottom)
-                            }
+                                linkTo(top = parent.top, bottom = parent.bottom)
+                            },
+                        onClick = onToggleTheme,
                     ) {
-                        Icon(Icons.Filled.MoreVert, contentDescription = "Toggle")
+                        Icon(Icons.Filled.MoreVert, contentDescription = "Toggle Dark/Light Theme")
                     }
                 }
             }

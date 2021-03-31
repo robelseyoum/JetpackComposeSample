@@ -9,6 +9,7 @@ import androidx.datastore.preferences.createDataStore
 import com.example.jetpackcomposesample.presentation.BaseApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,10 +18,9 @@ import javax.inject.Singleton
 @Singleton
 class SettingsDataStore
 @Inject
-constructor(app: BaseApplication) {
+constructor(app: BaseApplication){
 
     private val datastore: DataStore<Preferences> = app.createDataStore(name = "settings")
-
     private val scope = CoroutineScope(Main)
     val isDark = mutableStateOf(false)
 
@@ -28,25 +28,24 @@ constructor(app: BaseApplication) {
         observeDataStore()
     }
 
-    private fun observeDataStore() {
+    private fun observeDataStore(){
         datastore.data.onEach { preferences ->
             preferences[DARK_THEME_KEY]?.let { isDarkTheme ->
                 isDark.value = isDarkTheme
             }
-        }
+        }.launchIn(scope)
     }
 
-    fun toggleTheme() {
+    fun toggleTheme(){
         scope.launch {
             datastore.edit { preferences ->
-                val current = preferences[DARK_THEME_KEY] ?: false
+                val current = preferences[DARK_THEME_KEY]?: false
                 preferences[DARK_THEME_KEY] = !current
             }
         }
     }
 
-    companion object {
+    companion object{
         private val DARK_THEME_KEY = booleanPreferencesKey("dark_theme_key")
     }
-
 }

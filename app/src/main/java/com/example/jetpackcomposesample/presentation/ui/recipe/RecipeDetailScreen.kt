@@ -24,7 +24,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun RecipeDetailScreen(
     isDarkTheme: Boolean,
     recipeId: Int?,
-    viewModel: RecipeViewModel,
+    viewModel: RecipeDetailViewModel,
 ) {
     Log.d("RecipeDetailScreen", "RecipeDetailScreen: $viewModel")
     Log.d("RecipeDetailScreen", "RecipeDetailScreen-recipeID: $recipeId")

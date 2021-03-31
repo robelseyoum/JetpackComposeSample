@@ -20,7 +20,7 @@ import javax.inject.Named
 const val STATE_KEY_RECIPE = "state.key.recipeId"
 
 @HiltViewModel
-class RecipeViewModel
+class RecipeDetailViewModel
 @Inject
 constructor(
     private val getRecipeUsecase: GetRecipeUsecase,
@@ -30,6 +30,8 @@ constructor(
 
     val recipe: MutableState<Recipe?> = mutableStateOf(null)
     val loading = mutableStateOf(false)
+
+    //this will help to happen once or load recipe detail once
     val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     init {

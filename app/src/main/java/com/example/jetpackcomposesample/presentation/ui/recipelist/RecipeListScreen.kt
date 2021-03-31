@@ -47,7 +47,7 @@ fun RecipeListScreen(
                     onExecuteSearch = { viewModel.onTriggerEvent(RecipeListEvent.NewSearchEvent) },
                     selectedCategory = selectedCategory,
                     onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                    onToggleTheme = { onToggleTheme() }
+                    onToggleTheme = onToggleTheme
                 )
             },
             scaffoldState = scaffoldState,

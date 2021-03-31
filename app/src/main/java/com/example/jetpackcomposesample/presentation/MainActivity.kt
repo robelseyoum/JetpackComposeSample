@@ -13,7 +13,7 @@ import androidx.navigation.compose.*
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcomposesample.presentation.navigation.Screen
 import com.example.jetpackcomposesample.presentation.ui.recipe.RecipeDetailScreen
-import com.example.jetpackcomposesample.presentation.ui.recipe.RecipeViewModel
+import com.example.jetpackcomposesample.presentation.ui.recipe.RecipeDetailViewModel
 import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListScreen
 import com.example.jetpackcomposesample.presentation.ui.recipelist.RecipeListViewModel
 import com.example.jetpackcomposesample.util.SettingsDataStore
@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
                     val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
                     val viewModel : RecipeListViewModel = viewModel("RecipeListViewModel", factory = factory)
                     RecipeListScreen(
-                        isDarkTheme = (application as BaseApplication).isDark.value,
-                        onToggleTheme = (application as BaseApplication)::toggleLightTheme,
+                        isDarkTheme = settingsDataStore.isDark.value,
+                        onToggleTheme = settingsDataStore::toggleTheme,
                         onNavigateToRecipeDetailScreen = navController::navigate,
                         viewModel = viewModel
                     )
@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity() {
                     })
                 ) { navBackStackEntry ->
                     val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
-                    val viewModel: RecipeViewModel = viewModel("RecipeViewModel", factory = factory)
+                    val viewModel: RecipeDetailViewModel = viewModel("RecipeViewModel", factory = factory)
                     RecipeDetailScreen(
-                        isDarkTheme = (application as BaseApplication).isDark.value,
+                        isDarkTheme = settingsDataStore.isDark.value,
                         recipeId = navBackStackEntry.arguments?.getInt("recipeId"),
                         viewModel = viewModel
                     )
@@ -66,5 +66,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 }
